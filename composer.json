@@ -1,0 +1,27 @@
+{
+    "name": "dong8yong8/sdktest",
+    "type": "library",
+    "description": "Aliyun PHP SDK Core",
+    "license": "MIT",
+    "homepage": "https://github.com/dong8yong8/aliyun-php-sdk-core",
+    "authors": [
+        {
+            "name": "dzhy",
+            "email": "743139662@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "autoload": {
+        "files": ["aliyun-php-sdk-core/Config.php"]
+    },
+    
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    }
+}
+
