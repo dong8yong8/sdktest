@@ -26,9 +26,9 @@ abstract class RoaAcsRequest extends AcsRequest
     private static $headerSeparator = "\n";
     private static $querySeprator = "&";
     
-    function  __construct($product, $version, $actionName, $locationServiceCode = null, $locationEndpointType = "openAPI")
+    public function __construct($product, $version, $actionName)
     {
-        parent::__construct($product, $version, $actionName, $locationServiceCode, $locationEndpointType);
+        parent::__construct($product, $version, $actionName);
         $this->setVersion($version);
         $this->initialize();
     }
@@ -69,34 +69,14 @@ abstract class RoaAcsRequest extends AcsRequest
         $signString .= $queryString;
         $this->headers["Authorization"] = "acs ".$credential->getAccessKeyId().":"
                 .$iSigner->signString($signString, $credential->getAccessSecret());
-        $requestUrl = $this->getProtocol()."://".$domain.$uri.$this->concatQueryString();
+        $requestUrl = $this->getProtocol()."://".$domain.$queryString;
         return $requestUrl;
-    }
-
-    private function concatQueryString() {
-        $sortMap  = $this->queryParameters;
-        if(null == $sortMap || count($sortMap) == 0){
-            return "";
-        }
-        $queryString ="";
-        ksort($sortMap);
-        foreach ($sortMap as $sortMapKey => $sortMapValue) {
-            $queryString = $queryString.$sortMapKey;
-            if (isset($sortMapValue)) {
-                $queryString = $queryString."=".urlencode($sortMapValue);
-            }
-            $queryString .= self::$querySeprator;
-        }
-
-        if (count($sortMap) > 0) {
-            $queryString = substr($queryString, 0, strlen($queryString)-1);
-        }
-        return '?'.$queryString;
     }
     
     private function prepareHeader($iSigner)
     {
-        $this->headers["Date"] = gmdate($this->dateTimeFormat);
+        date_default_timezone_set("GMT");
+        $this->headers["Date"] = date($this->dateTimeFormat);
         if (null == $this->acceptFormat) {
             $this->acceptFormat = "RAW";
         }
@@ -104,12 +84,11 @@ abstract class RoaAcsRequest extends AcsRequest
         $this->headers["x-acs-signature-method"] = $iSigner->getSignatureMethod();
         $this->headers["x-acs-signature-version"] = $iSigner->getSignatureVersion();
         $this->headers["x-acs-region-id"] = $this->regionId;
-        $content = $this->getContent();
+        $content = $this->getDomainParameter();
         if ($content != null) {
-            $this->headers["Content-MD5"] = base64_encode(md5($content, true));
+            $this->headers["Content-MD5"] = base64_encode(md5(json_encode($content), true));
         }
-
-        $this->headers["Content-Type"] = "application/json;charset=utf-8";
+        $this->headers["Content-Type"] = "application/octet-stream;charset=utf-8";
     }
     
     private function replaceOccupiedParameters()
@@ -160,7 +139,7 @@ abstract class RoaAcsRequest extends AcsRequest
             $sortMap[$uriParts[1]] = null;
         }
         $queryString = $uriParts[0];
-        if (count($sortMap) > 0) {
+        if (count($uriParts)) {
             $queryString = $queryString."?";
         }
         ksort($sortMap);
@@ -169,9 +148,9 @@ abstract class RoaAcsRequest extends AcsRequest
             if (isset($sortMapValue)) {
                 $queryString = $queryString."=".$sortMapValue;
             }
-            $queryString = $queryString.self::$querySeprator;
+            $queryString = $queryString.$querySeprator;
         }
-        if (count($sortMap) > 0) {
+        if (null==count($sortMap)) {
             $queryString = substr($queryString, 0, strlen($queryString)-1);
         }
         return $queryString;

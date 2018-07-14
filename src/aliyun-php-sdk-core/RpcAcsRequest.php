@@ -21,10 +21,10 @@ abstract class RpcAcsRequest extends AcsRequest
 {
     private $dateTimeFormat = 'Y-m-d\TH:i:s\Z';
     private $domainParameters = array();
-
-    function  __construct($product, $version, $actionName, $locationServiceCode = null, $locationEndpointType = "openAPI")
+    
+    public function __construct($product, $version, $actionName)
     {
-        parent::__construct($product, $version, $actionName, $locationServiceCode, $locationEndpointType);
+        parent::__construct($product, $version, $actionName);
         $this->initialize();
     }
     
@@ -33,6 +33,7 @@ abstract class RpcAcsRequest extends AcsRequest
         $this->setMethod("GET");
         $this->setAcceptFormat("JSON");
     }
+    
 
     private function prepareValue($value)
     {
@@ -58,13 +59,11 @@ abstract class RpcAcsRequest extends AcsRequest
         $apiParams["Format"] = $this->getAcceptFormat();
         $apiParams["SignatureMethod"] = $iSigner->getSignatureMethod();
         $apiParams["SignatureVersion"] = $iSigner->getSignatureVersion();
-        $apiParams["SignatureNonce"] = md5(uniqid(mt_rand(), true));
-        $apiParams["Timestamp"] = gmdate($this->dateTimeFormat);
+        $apiParams["SignatureNonce"] = uniqid();
+        date_default_timezone_set("GMT");
+        $apiParams["Timestamp"] = date($this->dateTimeFormat);
         $apiParams["Action"] = $this->getActionName();
         $apiParams["Version"] = $this->getVersion();
-        if ($credential->getSecurityToken() != null) {
-            $apiParams["SecurityToken"] = $credential->getSecurityToken();
-        }
         $apiParams["Signature"] = $this->computeSignature($apiParams, $credential->getAccessSecret(), $iSigner);
         if (parent::getMethod() == "POST") {
             $requestUrl = $this->getProtocol()."://". $domain . "/";
