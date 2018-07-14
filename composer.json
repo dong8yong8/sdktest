@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Aliyun PHP SDK Core",
     "license": "MIT",
-    "version": "dev-master",
+    "version": "1.0.0",
     "homepage": "https://github.com/dong8yong8/aliyun-php-sdk-core",
     "authors": [
         {
