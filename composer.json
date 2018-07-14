@@ -2,7 +2,7 @@
     "name": "dong8yong8/sdktest",
     "type": "library",
     "description": "Aliyun PHP SDK Core",
-    "license": "MIT",
+    "license": "properitis",
     "homepage": "https://github.com/dong8yong8/aliyun-php-sdk-core",
     "authors": [
         {
