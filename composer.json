@@ -16,13 +16,6 @@
     },
     "autoload": {
         "files": ["aliyun-php-sdk-core/Config.php"]
-    },
-    
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.phpcomposer.com"
-        }
     }
 }
 
