@@ -4,6 +4,7 @@
     "description": "Aliyun PHP SDK Core",
     "license": "proprietary",
     "homepage": "https://github.com/dong8yong8/aliyun-php-sdk-core",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "dzhy",
